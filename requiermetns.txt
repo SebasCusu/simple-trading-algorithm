@@ -1,0 +1,4 @@
+yfinance
+sqlite3
+numpy
+datetime
