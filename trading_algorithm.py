@@ -19,7 +19,6 @@ cur.execute(
     """
 )
 
-
 def download_data(ticker):
     """
     Download market data and calculate moving averages.
@@ -44,15 +43,18 @@ def download_data(ticker):
 
     return current_price, fast_sma, slow_sma
 
-
 # Run strategy
-ticker = "TSLA"
-result = download_data(ticker)
+tickers = ["AAPL","TSLA","MSFT","NFLX","NVDA","SPCX"]
+for ticker in tickers:
 
-if result is not None:
+    result = download_data(ticker)
+
+    if result is None:
+        continue
+
     current_price, fast_sma, slow_sma = result
 
-    # Trading logic
+        # Trading logic
     if fast_sma > slow_sma:
         signal = "Buy"
     elif fast_sma < slow_sma:
@@ -64,18 +66,17 @@ if result is not None:
 
     # Save result
     cur.execute(
-        "INSERT INTO history VALUES (?, ?, ?, ?)",
-        (ticker, today, current_price, signal),
-    )
+            "INSERT INTO history VALUES (?, ?, ?, ?)",
+            (ticker, today, current_price, signal),
+        )
     conn.commit()
 
     # Show history
-    cur.execute("SELECT * FROM history")
-    saved_data = cur.fetchall()
+cur.execute("SELECT * FROM history")
+saved_data = cur.fetchall()
 
-    print("\nHistory")
-    for row in saved_data:
-        print(row)
-
+print("\nHistory")
+for row in saved_data:
+    print(row)
 
 conn.close()
